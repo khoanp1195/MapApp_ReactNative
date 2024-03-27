@@ -46,7 +46,22 @@ If everything is set up _correctly_, you should see your new app running in your
 
 This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-## Step 3: Modifying your App
+
+## Step 3: Libraries need to be installed
+```bash
+# using npm
+npm install react-native-maps
+
+npm install react-native-document-picker
+
+yarn install xlsx
+
+yarn install react-native-fs
+
+yarn install @react-navigation/native
+```
+
+## Step 4: Modifying your App
 
 Now that you have successfully run the app, let's modify it.
 
