@@ -5,7 +5,7 @@ import {MapScreen} from "../screens/map_screen.tsx"
 const Stack = createStackNavigator();
 export const AppNavigation = () => {
   return (
-    <Stack.Navigator initialRouteName="BottomNavigation">
+    <Stack.Navigator>
       <Stack.Screen
         name="MapScreen"
         // @ts-ignore

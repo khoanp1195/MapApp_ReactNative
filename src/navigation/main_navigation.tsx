@@ -1,6 +1,6 @@
 import { Platform, SafeAreaView, View } from 'react-native';
-import { AppNavigation } from "./app_navigation.tsx";
 import { MapScreen } from '../screens/map_screen.tsx';
+import React from 'react';
 
 export const AuthNavigation = () => {
   const NavigateToView = () => {
@@ -13,7 +13,7 @@ export const AuthNavigation = () => {
   return Platform.OS == 'android' ? (
     <NavigateToView />
   ) : (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: 'white',
@@ -23,6 +23,6 @@ export const AuthNavigation = () => {
         marginTop: 35,
       }}>
       <NavigateToView />
-    </SafeAreaView >
+    </View >
   );
 };

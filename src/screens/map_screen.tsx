@@ -18,8 +18,8 @@ export const MapScreen = () => {
   const [searchKey, setSearchKey] = useState("")
   const [titleKey, settitleKey] = useState("")
   const [filteredData, setFilteredData] = useState([]);
-
   let loadingTimeout;
+
     //@ts-ignore
     const Item = ({ item, index }) => {
       return (

@@ -1,6 +1,5 @@
 import {Model, Q, tableSchema} from "@nozbe/watermelondb";
 import {field} from "@nozbe/watermelondb/decorators";
-import {isNullOrEmpty} from "../../../utils/function";
 import { database } from "../database";
 
 export class MapData extends Model {
@@ -45,11 +44,10 @@ export class MapData extends Model {
     // @ts-ignore
     static async getAll(limit) {
         // @ts-ignore
-            // @ts-ignore
         const table = database.get<MapData>(MapData.table);
         const data: MapData[] = await table.query(
-            Q.skip(0), // Apply the offset
-            Q.take(20) // Apply the limit
+            Q.skip(0),
+            Q.take(50)
         ).unsafeFetchRaw();
         return data;
     }
