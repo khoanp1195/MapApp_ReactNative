@@ -1,0 +1,30 @@
+const colors = {
+  white: '#ffffff',
+  black: '#000000',
+  grey999: '#999999',
+  blueBold: '#0054AE',
+  blueLight: '#0262E9',
+  blueMedium:'#025ED8',
+  orange: '#FF7633',
+  lightBlack: '#5E5E5E',
+  primary: '#015DD1',
+  greyF5: '#F5F5F5',
+  black26: '#262626',
+  pictonBlue: '#47AFFC',
+  textBlack19: '#19191E',
+  lightBlue: '#D1E9FF',
+  red: '#FF0000',
+  purple: '#8B4FB7',
+  scienceBlue: '#005FD4',
+  whiteRock: '#E5E5E5',
+  whiteLilac: '#F6F8FA',
+  tab_bg_blue: '#00419E',
+  Seashell: '#EEF6FF',
+  greyDDD: '#DDDDDD',
+  alice_blue: '#EFF7FF',
+  green:"#239720",
+  greenLight: '#77E075',
+  yellow: '#FFDA6C'
+};
+
+export default colors;
