@@ -16,7 +16,7 @@ import { BeanMapData } from '../../services/database/models/bean_map'
 import { styles } from './shopScreen.style'
 import * as Animatable from 'react-native-animatable';
 
-
+//khoa
 export const Shop_Screen = () => {
     const [dataMark, setDataMark] = useState<BeanMapData[]>([])
     const [dataCategory, setDataCategory] = useState([])

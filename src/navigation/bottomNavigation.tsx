@@ -40,6 +40,7 @@ export const BottomNavigationContainer = () => {
         })}
         tabBar={(props) => <AnimatedTabBar {...props} />}
       >
+        
         <Tab.Screen
           name="Home"
           options={{
