@@ -52,7 +52,7 @@ export const BottomNavigationContainer = () => {
           name="Upload"
           options={{
             // @ts-ignore
-            tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../../src/assets/lottie/upload.icon.json')} style={styles.icon} />,
+            tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../../src/assets/lottie/calendar_animtion.json')} style={styles.icon} />,
           }}
           component={calendar_screen}
         />
@@ -60,7 +60,12 @@ export const BottomNavigationContainer = () => {
           name="Chat"
           options={{
             // @ts-ignore
-            tabBarIcon: ({ ref }) => <Lottie ref={ref} loop={false} source={require('../../src/assets/lottie/chat.icon.json')} style={styles.icon} />,
+            tabBarIcon: ({ ref }) =>
+             <Lottie ref={ref}
+              loop={false} 
+              source={require('../../src/assets/lottie/chat.icon.json')}
+               style={[styles.icon, { backgroundColor: 'transparent' }]} 
+               />,
           }}
           component={Report_Screen}
         />

@@ -2,6 +2,7 @@ import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite";
 import {appSchema, Database} from "@nozbe/watermelondb";
 import schema from "./schema";
 import { MapData } from "./models/MapData";
+import { ImageChildData } from "./models/ImageChildData";
 
 const adapter = new SQLiteAdapter({
     schema:schema,
@@ -11,7 +12,8 @@ const adapter = new SQLiteAdapter({
 export const database = new Database({
     adapter: adapter,
     modelClasses: [
-        MapData
+        MapData,
+        ImageChildData
     ],
     // @ts-ignore
     actionsEnabled: true,

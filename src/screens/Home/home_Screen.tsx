@@ -17,6 +17,7 @@ import { AppBarHeader } from '../../component/AppBarHeader';
 import Lottie from 'lottie-react-native'
 import LottieView from 'lottie-react-native';
 import { setIsUpdateFinish, setIsUpdateFinishHome } from '../../redux/detail/reducer';
+import { NotificationIcon } from '../../assets/svg';
 
 const HALF_MONTHS = [
     'Jan',
@@ -151,6 +152,7 @@ export const HomeScreen = () => {
     useEffect(() => {
         if (IsUpdateFromHome || isUpdateFromDetail) {
             distanceRecentData()
+            topCoffeeData()
             fetchData()
             dispatch(setIsUpdateFinishHome())
         }
@@ -234,6 +236,42 @@ export const HomeScreen = () => {
             <AppBarHeader title={'Home'} />
 
             <ScrollView style={{ flex: 1, backgroundColor: 'rgb(242, 242, 242)' }}>
+                <View style={{width:'100%',height:'10%',flexDirection:'row'}}>
+                    <View style={{width:'60%',height:'100%', flexDirection:'column',
+                        justifyContent:'center',
+                    }}>
+                        <View style={{marginLeft:'8%'}}>
+                        <Text style={{color:'gray',fontSize:16}}>Your Location</Text>
+                            <Text style={{fontSize:17,fontWeight:'600', marginTop:'4%'}}>HO CHI MINH CITY</Text>
+                        </View>
+                    </View>
+                    <View style={{ width:'40%',flexDirection:'row',
+                    justifyContent:'center',
+                    alignContent:'center',
+                    alignItems:'center'
+
+                }}>
+                    <TouchableOpacity style={{width:'20%',height:'32%',backgroundColor:'white', borderRadius: 40,
+                    justifyContent:'center',
+                    alignContent:'center',
+                    alignItems:'center'
+                            }}>
+                                   <NotificationIcon />
+
+
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{width:80,height:80,backgroundColor:'blue',borderRadius:40
+                            ,marginLeft:'5%'
+                            }}>
+                                        <Image
+                            source={ require("../../assets/images/img_defaultGirl.png")}
+                            resizeMode="stretch"
+                            style={{ width: '100%', borderRadius: 80, height: 80, alignSelf: 'center' }}
+                        />
+                            </TouchableOpacity>
+                    </View>
+
+                </View>
                 <View style={styles.container}>
                     <View style={{ backgroundColor: 'rgb(242, 242, 242)' }}>
                         <View style={{ flexDirection: 'row', padding: 16 }}>
@@ -284,8 +322,10 @@ export const HomeScreen = () => {
                             </View>
                         </View> */}
 
-                        <View style={{ width: '100%', height: 40, marginTop: '2%', flexDirection: 'row' }}>
+                        {/* <View style={{ width: '100%', height: 40, marginTop: '2%', flexDirection: 'row' }}>
 
+
+                            TẠM ĐÓNG 9.1.2024
                             <TouchableOpacity style={{
                                 width: '15%',
                                 height: '90%',
@@ -322,7 +362,7 @@ export const HomeScreen = () => {
                                 <Text>Recently</Text>
                             </TouchableOpacity>
 
-                        </View>
+                        </View> */}
                     </View>
                     <View style={styles.stickyHeaderContainer}>
                         <Text style={styles.hotelCountText}>Coffee Recently You</Text>

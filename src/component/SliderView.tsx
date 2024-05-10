@@ -5,6 +5,8 @@ import { Slider } from '@miblanchard/react-native-slider';
 const SliderView: React.FC = () => {
   const [distValue, setDistValue] = useState(50.0);
 
+  console.log("SliderView - here: " + distValue)
+
   return (
     <Slider
       containerStyle={{ marginHorizontal: 16, marginBottom: 12 }}

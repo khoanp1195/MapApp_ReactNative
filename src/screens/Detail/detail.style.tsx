@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { dimensWidth } from "../../config/font";
+import { FontFamily, dimensWidth } from "../../config/font";
 import colors from "../../themes/Colors";
 import { FontSize } from "../../themes/const";
 
@@ -10,13 +10,23 @@ export const styles = StyleSheet.create({
     },
     flexDirectionBetween: {
         flexDirection: 'column',
-        width: '86%',
+        width: '100%',
+        padding:10
     },
     image: {
         height: 30,
         width: 30,
 
     },
+      
+    modalAdd: {
+        width: '100%',
+        height: 3500,
+        flexDirection: 'column',
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        borderRadius: 10,
+      },
     touch: {
         padding: 6,
         position: 'absolute',
@@ -39,6 +49,11 @@ export const styles = StyleSheet.create({
         height: 200,
         marginTop: '5%'
     },
+    textNote: {
+        width: '100%',
+        height: 200,
+        fontFamily: 'WorkSans-Medium',
+    },
     input: {
         height: 48,
         color: 'black',
@@ -48,14 +63,12 @@ export const styles = StyleSheet.create({
         borderWidth: 0.5
     },
     title: {
-        fontSize: FontSize.MEDIUM,
+        fontSize: FontSize.LARGE_XX,
         color: colors.textBlack19,
-        fontWeight: '400',
+        fontWeight: '600',
         fontFamily: 'arial',
-        marginBottom: 6,
         marginRight: dimensWidth(5),
         flex: 1,
-        marginTop: '3%',
         height: 40
     },
 
@@ -93,10 +106,13 @@ export const styles = StyleSheet.create({
         marginTop: '2%',
     },
     checkBoxBtn: {
-        alignSelf: 'flex-start',
+        alignSelf: 'center',
         alignItems: 'center',
-        flexDirection: 'row',
-        padding: 8,
+        flexDirection: 'column',
+        backgroundColor:'brown',
+        height:100,
+        width:100,
+        
     },
     touchSendUnit: {
         backgroundColor: colors.lightBlue,
@@ -105,7 +121,6 @@ export const styles = StyleSheet.create({
         borderRadius: 10,
         alignSelf: 'baseline',
         marginRight: 10,
-        marginTop: '3%',
         alignItems: 'center',
     },
     textSendUnit: {

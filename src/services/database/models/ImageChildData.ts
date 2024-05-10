@@ -2,59 +2,23 @@ import { Model, Q, tableSchema } from "@nozbe/watermelondb";
 import { field } from "@nozbe/watermelondb/decorators";
 import { database } from "../database";
 
-export class MapData extends Model {
-    static table = 'Map';
-    // @ts-ignore
-    @field('latitude') latitude;
-    // @ts-ignore
-    @field('longitude') longitude;
+export class ImageChildData extends Model {
+    static table = 'ImageChildData';
     // @ts-ignore
     @field('title') title;
     // @ts-ignore
-    @field('description') description;
-    // @ts-ignore
-    @field('NumOfHouse') NumOfHouse;
-    // @ts-ignore
     @field('ShopCode') ShopCode;
     // @ts-ignore
-    @field('ProvinceId') ProvinceId;
-    // @ts-ignore
-    @field('DistrictId') DistrictId;
-    // @ts-ignore
-    @field('WardId') WardId;
-    // @ts-ignore
-    @field('Rating') Rating;
-    // @ts-ignore
-    @field('Note') Note;
-    // @ts-ignore
     @field('Image') Image;
-    // @ts-ignore
-    @field('Category') Category;
-    // @ts-ignore
-    @field('Utilities') Utilities;
-    // @ts-ignore
-    @field('ImageChild') ImageChild;
 
 
     static getSchema() {
         return tableSchema({
-            name: MapData.table,
+            name: ImageChildData.table,
             columns: [
-                { name: 'latitude', type: 'number' },
-                { name: 'longitude', type: 'number' },
                 { name: 'title', type: 'string' },
-                { name: 'description', type: 'string' },
-                { name: 'NumOfHouse', type: 'string' },
                 { name: 'ShopCode', type: 'string' },
-                { name: 'ProvinceId', type: 'number' },
-                { name: 'DistrictId', type: 'string' },
-                { name: 'WardId', type: 'number' },
-                { name: 'Rating', type: 'string' },
-                { name: 'Note', type: 'string' },
                 { name: 'Image', type: 'string' },
-                { name: 'Category', type: 'string' },
-                { name: 'Utilities', type: 'string' },
-                { name: 'ImageChild', type: 'string' }
             ],
         });
     }
@@ -62,8 +26,8 @@ export class MapData extends Model {
     // @ts-ignore
     static async getAll(limit, offset) {
         // @ts-ignore
-        const table = database.get<MapData>(MapData.table);
-        const data: MapData[] = await table.query(
+        const table = database.get<ImageChildData>(ImageChildData.table);
+        const data: ImageChildData[] = await table.query(
             Q.skip(offset),
             Q.take(limit)
         ).unsafeFetchRaw();
@@ -74,7 +38,7 @@ export class MapData extends Model {
     static async getDataBasePosition(latitude, longitude, limit, offset) {
         try {
             // Get a reference to the table
-            const table = database.get<MapData>(MapData.table);
+            const table = database.get<ImageChildData>(ImageChildData.table);
 
             // Calculate the range of latitude and longitude values to query
             const latitudeRange = [latitude - 0.1, latitude + 0.1]; // Adjust the range as needed
@@ -99,7 +63,7 @@ export class MapData extends Model {
 
     static async getMapByShopCode(ShopCode: number) {
         // @ts-ignore
-        const table = database.get<MapData>(MapData.table);
+        const table = database.get<ImageChildData>(ImageChildData.table);
         return await table.query(
             Q.where("ShopCode", ShopCode),
         ).unsafeFetchRaw();
@@ -107,14 +71,14 @@ export class MapData extends Model {
 
     static async getMapByShopName(ShopName: string) {
         // @ts-ignore
-        const table = database.get<MapData>(MapData.table)
+        const table = database.get<ImageChildData>(ImageChildData.table)
         return await table.query(
             Q.where("title", ShopName),).unsafeFetchRaw();
     }
 
     static async deleteAll() {
         // @ts-ignore
-        const table = database.get<MapData>(MapData.table);
+        const table = database.get<ImageChildData>(ImageChildData.table);
         const tasksToDelete = await table.query().fetch();
         if (tasksToDelete.length > 0) {
             for (const task of tasksToDelete) {
@@ -133,7 +97,7 @@ export class MapData extends Model {
     static deleteItemByShopCode = async (shopCode: any) => {
         try {
             // Get the table
-            const table = database.get(MapData.table);
+            const table = database.get(ImageChildData.table);
 
             // Query for the item with the specified shopCode
             const itemToDelete = await table.query(Q.where('ShopCode', shopCode)).fetch();
@@ -172,7 +136,7 @@ export class MapData extends Model {
 
     static async insertOrUpdateAll(models: any[]): Promise<void> {
         // @ts-ignore
-        const table = database.get<MapData>(MapData.table);
+        const table = database.get<ImageChildData>(ImageChildData.table);
         database.write(async () => {
             for (const model of models) {
                 const data = await table
@@ -182,21 +146,9 @@ export class MapData extends Model {
                 if (data?.length > 0) {
                     // @ts-ignore
                     data[0].update(form => {
-                        form.latitude = model.latitude;
-                        form.longitude = model.longitude;
-                        form.description = model.description
-                        form.NumOfHouse = model.NumOfHouse;
                         form.ShopCode = model.ShopCode;
                         form.title = model.title;
-                        form.ProvinceId = model.ProvinceId;
-                        form.DistrictId = model.DistrictId;
-                        form.WardId = model.WardId;
-                        form.Rating = model.Rating;
-                        form.Note = model.Note;
                         form.Image = model.Image
-                        form.Category = model.Category
-                        form.Utilities = model.Utilities
-                        form.ImageChild = model.ImageChild
 
                     });
                     if (__DEV__)
@@ -206,21 +158,9 @@ export class MapData extends Model {
                         console.log('Insert Comment:', model);
                     // @ts-ignore
                     table.create(field => {
-                        field.latitude = model.latitude;
-                        field.longitude = model.longitude;
                         field.ShopCode = model.ShopCode;
-                        field.description = model.description
-                        field.NumOfHouse = model.NumOfHouse;
                         field.title = model.title;
-                        field.ProvinceId = model.ProvinceId;
-                        field.DistrictId = model.DistrictId;
-                        field.WardId = model.WardId;
-                        field.Rating = model.Rating
-                        field.Note = model.Note
                         field.Image = model.Image
-                        field.Category = model.Category
-                        field.Utilities = model.Utilities
-                        field.ImageChild = model.ImageChild
                     });
                 }
             }
@@ -230,23 +170,12 @@ export class MapData extends Model {
 
     static async addNewItem(item: any): Promise<void> {
         try {
-            const table = database.get<MapData>(MapData.table);
+            const table = database.get<ImageChildData>(ImageChildData.table);
             await database.write(async () => {
-                await table.create((newItem) => {
-                    newItem.latitude = item.latitude;
-                    newItem.longitude = item.longitude;
+                await table.create((newItem: any) => {
                     newItem.title = item.title;
-                    newItem.description = item.description || 'Description of the new shop';
-                    newItem.NumOfHouse = item.NumOfHouse || '';
-                    newItem.ProvinceId = item.ProvinceId || '';
-                    newItem.DistrictId = item.DistrictId || '';
-                    newItem.WardId = item.WardId || '';
-                    newItem.Rating = item.Rating || '';
                     newItem.ShopCode = item.ShopCode || ''; // Make sure it's unique
                     newItem.Image = item.Image
-                    newItem.Category = item.Category
-                    newItem.Utilities = item.Utilities
-                    newItem.ImageChild = item.ImageChild
                 });
             });
             console.log('New item added successfully');

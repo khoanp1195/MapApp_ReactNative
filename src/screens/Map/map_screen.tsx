@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Alert, Button, FlatList, Image, Modal, Pressable, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Button, FlatList, Image, Linking, Modal, Pressable, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import RNFS, { readFile } from 'react-native-fs';
 import XLSX from 'xlsx';
 import DocumentPicker from 'react-native-document-picker';
@@ -22,7 +22,7 @@ import { styles } from "./map.style";
 import { BeanMapData } from "../../services/database/models/bean_map";
 import { haversine } from "../../util/functions";
 import { setIsUpdate, setIsUpdateHome } from "../../redux/detail/reducer";
-
+import * as Animatable from 'react-native-animatable';
 
 interface Coordidates {
   Latitude: any;
@@ -51,6 +51,7 @@ export const MapScreen = () => {
   const navigation = useNavigation();
   const [latitudetxt, Setlatitude] = useState("")
   const [imageUri, setImageUri] = useState(null)
+  const [imageUriIcon, setImageUriIcon] = useState(null)
   const route = useRoute();
   const snapPoints = useMemo(() => ['25%', '50%', '98%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -209,6 +210,25 @@ export const MapScreen = () => {
     }
   };
 
+  const handleImageUploadCategory = async () =>{
+    try {
+      const options = {
+        title: 'Select Image',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      };
+      // @ts-ignore
+      const result = await ImagePicker.launchImageLibrary(options);
+      const jsonObject = JSON.parse(JSON.stringify(result));
+      const uri = jsonObject.assets[0].uri;
+      setImageUriIcon(uri);
+    } catch (error) {
+      console.log("handleImageUploadCategory - error: " + error)
+    }
+  }
+
   const saveMarker = async (data: any) => {
     try {
       console.log("Latitude in saveMarker: " + latitude);
@@ -231,8 +251,10 @@ export const MapScreen = () => {
         WardId: "",
         Rating: ratingInfo || 5,
         Image: imageUri,
-        Category: category
+        Category: category,
+        Utilities: JSON.stringify( popularFilterList)
       };
+      console.log("Json stringtyfy tien ich day nha trong Form Add: " + JSON.stringify(popularFilterList))
       await MapData.addNewItem(mapDataNew);
       Alert.alert('Add Success', 'Marker added successfully.' + latitude + longtitude, [
         {
@@ -248,6 +270,7 @@ export const MapScreen = () => {
     }
   };
 
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -323,6 +346,7 @@ export const MapScreen = () => {
     { titleTxt: 'Nhộn nhịp', isSelected: false, icon: 'icon_friend' },
   ];
   const [popularFilterList, setPopularFilterList] = useState(popularFList);
+
   const getPList = () => {
     const noList: JSX.Element[] = [];
     let count = 0;
@@ -398,6 +422,86 @@ export const MapScreen = () => {
 
     return noList;
   };
+  const getPListinModal = (item: any) => {
+    // console.log("item.Utilities in list : " + item.Utilities)
+    // const tienIchArray = JSON.parse(JSON.stringify(item.Utilities));
+    const tienIchArray = item.Utilities ? JSON.parse(item.Utilities) : [];
+    // ERROR  SyntaxError: JSON Parse error: Unexpected character: u
+    const noList: JSX.Element[] = [];
+    let count = 0;
+    const columnCount = 2;
+    const images = (img: string) => {
+      switch (img) {
+        case 'icon_parking':
+          return require('../../assets/images/icon_parking.png')
+        case 'icon_friend':
+          return require('../../assets/images/icon_friend.png')
+        case 'icon_cup':
+          return require('../../assets/images/icon_cup.png')
+
+        case 'icon_coffee':
+          return require('../../assets/images/icon_coffee.png')
+        case 'icon_socket':
+          return require('../../assets/images/icon_socket.png')
+        case 'icon_freewifi':
+          return require('../../assets/images/icon_freewifi.png')
+
+        case 'icon_freelance':
+          return require('../../assets/images/icon_freelance.png')
+        case 'icon_silent':
+          return require('../../assets/images/icon_silent.png')
+      }
+    };
+
+    for (let i = 0; i < tienIchArray.length / columnCount; i++) {
+      const listUI: JSX.Element[] = [];
+      for (let j = 0; j < columnCount; j++) {
+        const data = tienIchArray[count];
+        listUI.push(
+          <View
+            key={`popular_${j}`}
+            style={{ flex: 1, borderRadius: 4, overflow: 'hidden' }}
+          >
+            <MyPressable
+              style={styles.checkBoxBtn}
+              touchOpacity={0.6}
+              onPress={() => {
+                data.isSelected = !data.isSelected;
+                setPopularFilterList([...popularFilterList]);
+              }}
+            >
+              <Image
+                // @ts-ignore
+                source={images(data.icon)}
+                resizeMode='center'
+                style={{ backgroundColor: data.isSelected ? '#f1b225' : 'transparent', width: 30, height: 30, borderRadius: 20 }}
+              />
+
+              <Text style={{
+                color: data.isSelected ? '#f1b225' : 'black',
+                marginStart: 4,
+                fontFamily: 'WorkSans-Regular',
+              }}>{data.titleTxt}</Text>
+            </MyPressable>
+          </View>,
+        );
+
+        if (count < popularFilterList.length - 1) {
+          count += 1;
+        } else {
+          break;
+        }
+      }
+      noList.push(
+        <View key={noList.length} style={{ flex: 1, flexDirection: 'row' }}>
+          {listUI}
+        </View>,
+      );
+    }
+
+    return noList;
+  };
+
   const rating = (data: any) => {
     const images = [];
     for (let i = 0; i < data.Rating; i++) {
@@ -495,12 +599,28 @@ export const MapScreen = () => {
             value={ratingInfo}
             onChangeText={setRatingInfo}
           />
+          <View style={{
+            flexDirection:'row',
+            width:'100%',height:'15%',
+            justifyContent:'center',
+            alignContent:'center',
+            alignItems:'center'}}>
           <TextInput
             style={styles.inputEdit}
             placeholder="Category"
             value={category}
             onChangeText={setCategory}
           />
+          <TouchableOpacity onPress={() =>{
+            handleImageUploadCategory()
+          }}>
+          <Image style={{ width:50,height:50 }}
+            source={{ uri: imageUriIcon ? imageUriIcon : '' }}
+            defaultSource={require("../../assets/images/tinnoiboloading.png")}
+          />
+          </TouchableOpacity>
+          </View>
+
           <TextInput
             style={styles.inputEdit}
             placeholder="Description"
@@ -512,7 +632,7 @@ export const MapScreen = () => {
         <View style={{
           flexDirection: 'row',
           height: 150,
-          marginTop:'5%',
+          marginTop: '5%',
           backgroundColor: 'white',
           justifyContent: 'space-between'
         }}>
@@ -567,15 +687,19 @@ export const MapScreen = () => {
 
 
   )
-  
 
-  const getPolyline = (latitudeP: any, longtitudeP:any) =>{
-    let myLatitude = currentPosition ?  currentPosition.latitude  : 10.8231
-    let myLongtitude = currentPosition ? currentPosition.longitude :106.6297
+  const handleGetDirection = (latitude: any, longtitude: any) => {
+    const url = `http://maps.apple.com/?daddr=${latitude},${longtitude}`;
+    Linking.openURL(url)
+      .catch((err) => console.error('An error occurred', err));
+  }
+  const getPolyline = (latitudeP: any, longtitudeP: any) => {
+    let myLatitude = currentPosition ? currentPosition.latitude : 10.8231
+    let myLongtitude = currentPosition ? currentPosition.longitude : 106.6297
     console.log("myLatitude - here" + myLatitude)
     const coordinates = [
       { latitude: myLatitude, longitude: myLongtitude }, // Starting point
-      { latitude: latitudeP, longitude: longtitudeP },   
+      { latitude: latitudeP, longitude: longtitudeP },
     ];
     setCoordinate(coordinates)
     setBottomSheetVisible(false)
@@ -697,7 +821,7 @@ export const MapScreen = () => {
 
 
       </View> */}
- 
+
       <MapView style={{ flex: 1 }}
         onPress={handleMapViewPress}
         region={{
@@ -717,13 +841,18 @@ export const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
         // onRegionChangeComplete={handleRegionChangeComplete}
-        mapType = { IsStandardMap ? "standard" : "satellite"}
+        mapType={IsStandardMap ? "standard" : "satellite"}
         onLongPress={handleLongPress}
       >
         <Polyline coordinates={coordinate} strokeColor="red" strokeWidth={3} />
 
         {markersLocal != undefined && markersLocal.map((marker: any, index: any) => (
-          <Marker key={`${marker.ShopCode}_${index}`} onPress={(data: any) => {
+             <Animatable.View
+             animation={'fadeInLeftBig'}
+             duration={1000}
+             delay={index * 200}
+           >
+                 <Marker key={`${marker.ShopCode}_${index}`} onPress={(data: any) => {
             handleMarkerPress(marker)
           }}
             coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
@@ -732,6 +861,8 @@ export const MapScreen = () => {
               source={marker.Image ? { uri: marker.Image } : require("../../assets/images/icon_CoffeeHouse.png")}
               style={styles.markerImage} />
           </Marker>
+                    </Animatable.View>
+    
         ))}
 
         {currentPosition && (
@@ -745,7 +876,7 @@ export const MapScreen = () => {
             title="Current Position"
           />
         )}
-      </MapView> 
+      </MapView>
 
 
       {loading && <View style={styles.dotsWrapper}>
@@ -843,22 +974,24 @@ export const MapScreen = () => {
                 <Text style={{ marginLeft: '3%', marginTop: '5%', fontWeight: '600', fontSize: 18 }}>Tiện ích</Text>
 
                 <View style={styles.tienIchField}>
-                  {getPList()}
+                  {getPListinModal(selectedMarker)}
                 </View>
                 <View style={styles.lineChild} />
-                <TouchableOpacity onPress={()=>{
-                    getPolyline(selectedMarker.latitude, selectedMarker.longitude)
+                <TouchableOpacity onPress={() => {
+                  handleGetDirection(selectedMarker.latitude, selectedMarker.longitude)
+                  getPolyline(selectedMarker.latitude, selectedMarker.longitude)
                 }} style={{
-                  backgroundColor:'#f1b225',
-                  alignSelf:'center', 
-                  marginTop:'5%',
-                  borderRadius:15 ,
-                  width:'80%', 
-                  height:'5%',
-                  justifyContent:'center',
-                  alignContent:'center',
-                  alignItems:'center'}}>
-                  <Text style={{fontSize:17}}>How to get there</Text>
+                  backgroundColor: '#f1b225',
+                  alignSelf: 'center',
+                  marginTop: '5%',
+                  borderRadius: 15,
+                  width: '80%',
+                  height: '5%',
+                  justifyContent: 'center',
+                  alignContent: 'center',
+                  alignItems: 'center'
+                }}>
+                  <Text style={{ fontSize: 17 }}>How to get there</Text>
                 </TouchableOpacity>
 
               </View>

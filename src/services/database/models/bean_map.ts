@@ -8,5 +8,6 @@ export class BeanMapData {
    public  ProvinceId: string | undefined;
    public DistrictId: string | undefined;
    public WardId: string | undefined;
-   public Note: string | undefined
+   public Note: string | undefined;
+   public Category: string | undefined
 }

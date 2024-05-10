@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
       fontWeight: '500',
       fontSize: 17,
       color: 'gray',
-      height: '10%'
+      height: '100%'
   
     },
     inputContainer: {
@@ -200,8 +200,6 @@ export const styles = StyleSheet.create({
       alignSelf: 'center',
       backgroundColor: 'white',
       borderRadius: 10,
-      
-  
     },
     formContainer: {
       backgroundColor: 'white',

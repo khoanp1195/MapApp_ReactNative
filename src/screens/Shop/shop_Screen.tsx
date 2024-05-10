@@ -1,5 +1,5 @@
 import { ActivityIndicator, Alert, Dimensions, FlatList, Image, RefreshControl, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { Component, useCallback, useEffect, useState } from 'react'
+import React, { Component, useCallback, useEffect, useRef, useState } from 'react'
 import { MapData } from '../../services/database/models/MapData'
 import { FontSize, dimensWidth } from '../../themes/const'
 import colors from '../../themes/Colors'
@@ -14,6 +14,8 @@ import NoDataView from '../../component/NoDataView'
 import { AppBarHeader } from '../../component/AppBarHeader'
 import { BeanMapData } from '../../services/database/models/bean_map'
 import { styles } from './shopScreen.style'
+import * as Animatable from 'react-native-animatable';
+
 
 export const Shop_Screen = () => {
     const [dataMark, setDataMark] = useState<BeanMapData[]>([])
@@ -29,10 +31,13 @@ export const Shop_Screen = () => {
     const [searchText, setSearchText] = useState('');
     const [filteredData, setFilteredData] = useState<BeanMapData[]>([])
     const dispatch = useDispatch();
+    const viewRef = useRef(null);
+    const [isChoseCategory, setIschoseCategory] = useState(false)
+    const [categoryDatam, setCategoryData] = useState<BeanMapData[]>([])
 
     console.log("isUpdateFromDetail - here  1212213: " + isUpdateFromDetail)
 
-    const ShopList = ({ item }: any) => {
+    const ShopList = ({ item, index }: any) => {
         const images = []
         for (let i = 0; i <= item.Rating; i++) {
             images.push(
@@ -43,69 +48,76 @@ export const Shop_Screen = () => {
             )
         }
         return (
-            <TouchableOpacity style={styles.item} onPress={() => {
-                // @ts-ignore
-                navigation.navigate("Detail_shop_Screen", { item: item });
-            }}>
+            <Animatable.View
+                animation={'fadeInLeftBig'}
+                duration={1000}
+                delay={index * 300}
+            >
+                <TouchableOpacity style={styles.item} onPress={() => {
+                    // @ts-ignore
+                    navigation.navigate("Detail_shop_Screen", { item: item });
+                }}>
 
-                <View style={{ flex: 1 }}>
-                    <Image
-                        source={item.Image ? { uri: item.Image } : require("../../assets/images/tinnoiboloading.png")}
-                        defaultSource={require("../../assets/images/tinnoiboloading.png")}
-                        resizeMode="stretch"
-                        style={{ width: '100%', borderRadius: 20, height: 200, marginLeft: 5, alignSelf: 'center' }}
-                    />
+                    <View style={{ flex: 1 }}>
+                        <Image
+                            source={item.Image ? { uri: item.Image } : require("../../assets/images/tinnoiboloading.png")}
+                            defaultSource={require("../../assets/images/tinnoiboloading.png")}
+                            resizeMode="stretch"
+                            style={{ width: '100%', borderRadius: 20, height: 320, marginLeft: 5, alignSelf: 'center' }}
+                        />
 
-                    <View style={{ flexDirection: 'row', width: '100%', height: 50, marginTop: '3%' }}>
-                        <View style={styles.flexDirectionBetween}>
-                            <Text style={styles.title} numberOfLines={2}>
-                                {item.title}
-                            </Text>
-                            <Text style={styles.date}>{item.ShopCode}</Text>
+                        <View style={{ flexDirection: 'row', width: '100%', height: 50, marginTop: '3%' }}>
+                            <View style={styles.flexDirectionBetween}>
+                                <Text style={styles.title} numberOfLines={2}>
+                                    {item.title}
+                                </Text>
+                                <Text style={styles.date}>{item.ShopCode}</Text>
+                            </View>
+
+
+                            <TouchableOpacity style={{
+                                width: 50, height: 50,
+                                backgroundColor: '#f6f6f6', borderRadius: 30, justifyContent: 'center'
+                            }}>
+                                <Image
+                                    source={require("../../assets/images/icon_favorite.png")}
+                                    resizeMode="contain"
+                                    style={{ width: '100%', height: '50%' }}
+                                />
+                            </TouchableOpacity>
                         </View>
-
-
-                        <TouchableOpacity style={{
-                            width: 50, height: 50,
-                            backgroundColor: '#f6f6f6', borderRadius: 30, justifyContent: 'center'
+                        <View style={{
+                            flexDirection: 'row',
+                            marginTop: '5%'
                         }}>
-                            <Image
-                                source={require("../../assets/images/icon_favorite.png")}
-                                resizeMode="contain"
-                                style={{ width: '100%', height: '50%' }}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{
-                        flexDirection: 'row',
-                        marginTop: '5%'
-                    }}>
 
-                        <Text style={[{ flex: 1 }, styles.category]}>{item.WardId}, {item.NumOfHouse}, {item.description}, {item.ProvinceId}</Text>
-                    </View>
-
-                    <View style={{ width: '100%', height: 30, flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
-                        <Text>{item.Rating}</Text>
-                        {images}
-                    </View>
-
-                    <Text style={styles.title}></Text>
-
-                    <View style={styles.chuyenDonViRow}>
-                        <View style={styles.touchSendUnit}>
-                            <Text style={styles.textSendUnit}>Đang mở cửa</Text>
+                            <Text style={[{ flex: 1 }, styles.category]}>{item.WardId}, {item.NumOfHouse}, {item.description}, {item.ProvinceId}</Text>
                         </View>
-                        <View style={[styles.flexDirectionBetween]}>
-                            <Text
-                                style={[
-                                    styles.date]}
-                            >
-                            </Text>
-                        </View>
-                    </View>
 
-                </View>
-            </TouchableOpacity>
+                        <View style={{ width: '100%', height: 30, flexDirection: 'row', alignContent: 'center', alignItems: 'center' }}>
+                            <Text>{item.Rating}</Text>
+                            {images}
+                        </View>
+
+                        <Text style={styles.title}></Text>
+
+                        <View style={styles.chuyenDonViRow}>
+                            <View style={styles.touchSendUnit}>
+                                <Text style={styles.textSendUnit}>Đang mở cửa</Text>
+                            </View>
+                            <View style={[styles.flexDirectionBetween]}>
+                                <Text
+                                    style={[
+                                        styles.date]}
+                                >
+                                </Text>
+                            </View>
+                        </View>
+
+                    </View>
+                </TouchableOpacity>
+            </Animatable.View>
+
         );
     };
 
@@ -116,6 +128,7 @@ export const Shop_Screen = () => {
         setSearchText("");
         fetchData();
         setDataMark([])
+        setIschoseCategory(false)
     }, []);
 
 
@@ -137,7 +150,7 @@ export const Shop_Screen = () => {
 
     const fetchData = async () => {
         try {
-            const data = await MapData.getAll(10, offset)
+            const data = await MapData.getAll(100, offset)
             if (data == undefined || (data.length === 0 || data.length < limit)) {
                 // Nếu số lượng item trả về ít hơn limit hoặc bằng 0
                 // setDataMark((prevData) => [...prevData, ...data]);
@@ -212,22 +225,22 @@ export const Shop_Screen = () => {
             //     {text: 'OK', onPress: () => console.log('OK Pressed')},
             //   ]);
         }
-    }, [isUpdateFromDetail])      
+    }, [isUpdateFromDetail])
 
-    const UniqueCategoryList = () =>{
+    const UniqueCategoryList = () => {
         const uniqueCategories = new Set()
-        dataMark.forEach(store =>{
-             // @ts-ignore
+        dataMark.forEach(store => {
+            // @ts-ignore
             uniqueCategories.add(store.Category)
         })
         const uniqueCategoriesArray = Array.from(uniqueCategories)
-        return(
+        return (
             <FlatList
-            data={uniqueCategoriesArray}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            horizontal={true} // Set to true for horizontal FlatList
-        />
+                data={uniqueCategoriesArray}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                horizontal={true} 
+            />
         )
     }
 
@@ -241,9 +254,20 @@ export const Shop_Screen = () => {
                 return require('../../assets/images/highLand_icon.jpg')
         }
     };
+
+    const choseCategory = (category: any) => {
+        setIsLoadingMore(false);
+        // @ts-ignore
+        const filteredData = dataMark.filter(item => item.Category.includes(category))
+        setCategoryData(filteredData);
+    }
+
     // Render item function for the FlatList
-    const renderItem = ({ item }: any) => ( 
-        <TouchableOpacity style={{
+    const renderItem = ({ item }: any) => (
+        <TouchableOpacity onPress={() => {
+            setIschoseCategory(true)
+            choseCategory(item)
+        }} style={{
             margin: 5
             , marginLeft: 20,
             borderRadius: 10,
@@ -257,7 +281,7 @@ export const Shop_Screen = () => {
                 // @ts-ignore
                 source={images(item)}
                 resizeMode='center'
-                 style={{ width: 40, borderRadius:10,marginLeft: '5%', height: 40 }}
+                style={{ width: 40, borderRadius: 10, marginLeft: '5%', height: 40 }}
             />
             <Text style={{ marginLeft: '7%' }}>{item}</Text>
         </TouchableOpacity>
@@ -357,18 +381,17 @@ export const Shop_Screen = () => {
                 }}>
                     <Text>Recently</Text>
                 </TouchableOpacity> */}
-               {
-                dataMark != undefined &&
-                UniqueCategoryList()
-               }
+                {
+                    dataMark != undefined &&
+                    UniqueCategoryList()
+                }
             </View>
 
-
             <FlatList
-                data={searchText != "" ? filteredData : dataMark}
+                data={searchText != "" ? filteredData : isChoseCategory ? categoryDatam : dataMark}
                 style={{ marginTop: '2%' }}
-                renderItem={({ item }) => (
-                    <ShopList item={item} />
+                renderItem={({ item, index }) => (
+                    <ShopList item={item} index={index} />
                 )}
                 onEndReachedThreshold={0.1}
                 refreshControl={
@@ -391,7 +414,6 @@ export const Shop_Screen = () => {
                 }}
                 keyExtractor={(item, index) => item.ShopCode + '_' + index}
             />
-
             <FilterModal {...{ showFilter, setShowFilter }} />
         </View>
     )

@@ -1,17 +1,19 @@
-import { View, Text, processColor, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, processColor, StyleSheet, Dimensions, FlatList } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PieChart } from "react-native-charts-wrapper";
 import { dimnensHeight } from '../../config/font';
 import { AppBarHeader } from '../../component/AppBarHeader';
-
+import { MapData } from '../../services/database/models/MapData';
+import { BeanMapData } from '../../services/database/models/bean_map';
+import { useSelector } from 'react-redux';
 const dataPieChart = {
     dataSets: [
         {
             values: [
-                { value: 0, label: "VB mới nhất" },
-                { value: 0, label: "VB yêu thích" },
-                { value: 0, label: "VB xem nhiều" },
-                { value: 0, label: "Bộ tiêu chuẩn" },
+                {label: "VB mới nhất",value: 0 },
+                {label: "VB yêu thích", value: 0 },
+                { label: "VB xem nhiều",value: 0 },
+                {label: "Bộ tiêu chuẩn",value: 0 },
             ],
             label: "",
             config: {
@@ -19,7 +21,12 @@ const dataPieChart = {
                     processColor("#f87080"),
                     processColor("#fdc065"),
                     processColor("#ab89f7"),
-                    processColor("#dbedea")
+                    processColor("#dbedea"),
+
+                    processColor("#fff3f5"),
+                    processColor("#ffe7ea"),
+                    processColor("#fdedde"),
+                    processColor("#f26472")
                 ],
                 drawValues: true,
                 valueTextSize: 15,
@@ -33,10 +40,12 @@ const dataPieChart = {
     ],
     highlights: [{ x: 2 }],
 };
-
 export const Report_Screen = () => {
-    const [dataChart, setdataChart] = useState(dataPieChart)
-
+    const [listDataCategory, SetListDataCategory] = useState([])
+    const [markersLocal, setmarkersLocal] = useState<BeanMapData[]>([])
+    const [dataChart, SetDataChart] = useState(dataPieChart)
+    const isUpdateFromDetail = useSelector((state: any) => state.detail.IsUpdate);
+    const IsUpdateFromHome = useSelector((state: any) => state.detail.setIsUpdateHome);
     const chartDimention = useMemo(() => {
         const scale = Dimensions.get('window').scale
         const dimention = dimnensHeight(scale)
@@ -44,43 +53,66 @@ export const Report_Screen = () => {
     }, [])
 
     useEffect(() => {
-        const newData = {
-            dataSets: [
-                {
-                    ...dataChart?.dataSets[0],
-                    values: [
-                        {
-                            value: 10,
-                            label: "VB mới nhất",
-                        },
-                        {
-                            value: 20,
-                            label: "VB yêu thích",
+        try {
+            const fetchData = async () => {
+                try {
+                    const data = await MapData.getAll(100, 0);
+                    setmarkersLocal(data);
 
-                        },
-                        {
-                            value: 30,
-                            label: "VB xem nhiều",
+                    const countCategories = () => {
+                        const count = {}
+                        markersLocal.forEach(item => {
+                            if (count[item.Category]) {
+                                count[item.Category]++
+                            } else {
+                                count[item.Category] = 1
+                            }
+                        })
+                        return count
+                    }
+                    const categoryCounts = countCategories();
+                    const flatListData = Object.keys(categoryCounts).map(category => ({
+                        category,
+                        count: categoryCounts[category],
+                    }));
+                    SetListDataCategory(flatListData)
+                    const values = flatListData.map(item => ({
+                        value: item.count,
+                        label: item.category,
+                    }));
+                    const newData = {
+                        dataSets: [
+                            {
+                                ...dataChart?.dataSets[0],
+                                values: values,
+                            },
+                        ],
+                        description: {
+                          text: 'This is Pie chart description',
+                          textSize: 15,
+                          textColor: processColor('darkgray'),
+                        }, 
+                      };
+                    // @ts-ignore
+                    SetDataChart(newData);
 
-                        },
-                        {
-                            value: 40,
-                            label: "Bộ tiêu chuẩn",
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+            fetchData();
+        } catch (error) {
+            console.log("Fetch Data Error: " + error)
+        }
+    },[isUpdateFromDetail,IsUpdateFromHome]);
 
-                        },
-                    ],
-                },
-            ],
-            description: {
-                text: 'This is Pie chart description',
-                textSize: 15,
-                textColor: processColor('darkgray'),
-
-            }
-        };
-        // @ts-ignore
-        setdataChart(newData);
-    }, [])
+    const renderItem = ({ item }: any) => (
+        <View style={{ paddingVertical: 5, marginLeft: '10%', flexDirection: 'row' }}>
+            <View style={{ backgroundColor: '#f87080', width: 20, height: 20 }}>
+            </View>
+            <Text style={{ marginLeft: '2%' }}>{`Category ${item.category}: ${item.count}`}</Text>
+        </View>
+    );
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -90,7 +122,7 @@ export const Report_Screen = () => {
                 style={[styles.viewChart, {
                     // height: 20 + (chartDimention) + '%',
                     height: '50%',
-                    width: '90%' + (chartDimention * Dimensions.get('window').scale) + '%',
+                    width: '220%' + (chartDimention * Dimensions.get('window').scale) + '%',
                     alignSelf: 'center',
                     marginTop: 15
 
@@ -109,7 +141,7 @@ export const Report_Screen = () => {
                 entryLabelColor={processColor("black")}
                 entryLabelTextSize={12}
                 touchEnabled={false}
-                drawEntryLabels={false}
+                drawEntryLabels={true}
                 usePercentValues={true}
                 rotationEnabled={true}
                 centerText={""}
@@ -120,8 +152,6 @@ export const Report_Screen = () => {
                 maxAngle={360}
                 rotationAngle={45}
             />
-
-
             <View
                 style={
                     {
@@ -132,97 +162,11 @@ export const Report_Screen = () => {
                         marginTop: 15
                     }
                 }>
-                <View style={{ flexDirection: 'row', height: 50 }}>
-                    <View style={{ marginLeft: '10%', backgroundColor: '#f87080', width: 20, height: 20 }}>
-                    </View>
-                    <View >
-                        <Text
-                            style={{
-                                marginLeft: '8%', fontWeight: '600'
-                            }}
-                        >
-                            Vb mới nhất
-                        </Text>
-                        <Text
-                            style={{
-                                marginLeft: '8%',
-                                color: 'gray'
-                            }}
-                        >
-                            10 vb mới nhất
-                        </Text>
-                    </View>
-                </View>
-
-
-                <View style={{ flexDirection: 'row', height: 50 }}>
-                    <View style={{ marginLeft: '10%', backgroundColor: '#fdc065', width: 20, height: 20 }}>
-                    </View>
-                    <View >
-                        <Text
-                            style={{
-                                marginLeft: '8%', fontWeight: '600'
-                            }}
-                        >
-                            Vb yêu thích
-                        </Text>
-                        <Text
-                            style={{
-                                marginLeft: '8%',
-                                color: 'gray'
-                            }}
-                        >
-                            10 Vb yêu thích
-                        </Text>
-                    </View>
-                </View>
-
-
-                <View style={{ flexDirection: 'row', height: 50 }}>
-                    <View style={{ marginLeft: '10%', backgroundColor: '#ab89f7', width: 20, height: 20 }}>
-                    </View>
-                    <View >
-                        <Text
-                            style={{
-                                marginLeft: '8%', fontWeight: '600'
-                            }}
-                        >
-                            Vb xem nhiều nhất
-                        </Text>
-                        <Text
-                            style={{
-                                marginLeft: '8%',
-                                color: 'gray'
-                            }}
-                        >
-                            10 Vb xem nhiều nhất
-                        </Text>
-                    </View>
-                </View>
-
-                <View style={{ flexDirection: 'row', height: 50 }}>
-                    <View style={{ marginLeft: '10%', backgroundColor: '#dbedea', width: 20, height: 20 }}>
-                    </View>
-                    <View >
-                        <Text
-                            style={{
-                                marginLeft: '8%', fontWeight: '600'
-                            }}
-                        >
-                            Bộ tiêu chuẩn
-                        </Text>
-                        <Text
-                            style={{
-                                marginLeft: '8%',
-                                color: 'gray'
-                            }}
-                        >
-                            10 Bộ tiêu chuẩn
-                        </Text>
-                    </View>
-                </View>
-
-
+                <FlatList
+                    data={listDataCategory}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                />
             </View>
 
 

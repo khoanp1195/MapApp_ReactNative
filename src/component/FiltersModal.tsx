@@ -36,11 +36,11 @@ const popularFList = [
 
 const accomodation_List = [
   { titleTxt: 'All', isSelected: false },
-  { titleTxt: 'Apartment', isSelected: false },
-  { titleTxt: 'Home', isSelected: true },
-  { titleTxt: 'Villa', isSelected: false },
-  { titleTxt: 'Hotel', isSelected: false },
-  { titleTxt: 'Resort', isSelected: false },
+  { titleTxt: 'Coffee', isSelected: false },
+  { titleTxt: 'Beer Chill', isSelected: true },
+  { titleTxt: 'Popular pub', isSelected: false },
+  { titleTxt: 'Expensive pub', isSelected: false },
+  { titleTxt: 'Bar', isSelected: false },
 ];
 
 const FilterModal: React.FC<Props> = ({ showFilter, setShowFilter }) => {
