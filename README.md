@@ -14,13 +14,17 @@ Yêu cầu:
 
 
 
-Config Momo Payment: Link npm: https://www.npmjs.com/package/react-native-momosdk Link Github: https://github.com/momo-wallet/mobile-sdk/tree/master Link Github momo-wallet: https://github.com/momo-wallet/mobile-sdk/blob/master/ios/README.md
-Link dowload Momo UAT and testing: https://developers.momo.vn/v2/#/docs/testing_information https://developers.momo.vn/v3/vi/docs/payment/onboarding/test-instructions/
+Config Momo Payment: Link npm: 
+https://www.npmjs.com/package/react-native-momosdk Link Github: https://github.com/momo-wallet/mobile-sdk/tree/master Link Github momo-wallet: https://github.com/momo-wallet/mobile-sdk/blob/master/ios/README.md
+Link dowload Momo UAT and testing: https:
+//developers.momo.vn/v2/#/docs/testing_information https://developers.momo.vn/v3/vi/docs/payment/onboarding/test-instructions/
 
 
 Config Zalo Payment:
-Link doc zalo: https://docs.zalopay.vn/v1/docs/apptoapp/api.html#doi-voi-react-native_tich-hop-va-khoi-tao-zpdk
-Demo connect to Zalo: https://github.com/phithu/rn-zalo
+Link doc zalo: 
+https://docs.zalopay.vn/v1/docs/apptoapp/api.html#doi-voi-react-native_tich-hop-va-khoi-tao-zpdk
+Demo connect to Zalo: 
+https://github.com/phithu/rn-zalo
 
 
 
